@@ -48,7 +48,7 @@ El sistema se integra con **FakeStoreAPI** como proveedor de datos externo, cons
 
 
 ### Clonar el Repositorio
-- git clone 
+- git clone https://github.com/justjianpier/coral-backend.git
 
 
 ### Configurar el entorno virtual (Windows)
