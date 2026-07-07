@@ -99,6 +99,7 @@ class ManageProductResource(Resource):
             
             image = request.files.get('image')
 
+            # Inicia con valores actuales que ya existe en la base de datos
             public_id = getattr(product, 'image_id', None) 
             secure_url = product.image
 
@@ -116,49 +117,6 @@ class ManageProductResource(Resource):
                         'error': 'Error uploading image'
                     }, 400
             
-            # Ahora 'public_id' siempre tendrá un valor (el nuevo o el antiguo)
-            updated_product = product_service.update(
-                product,
-                validated_data,
-                public_id
-            )
-            
-            # 'secure_url' mantendrá la imagen previa si no se subió una nueva
-            updated_product.image = secure_url
-
-            return updated_product.to_json(), 200
-
-        except Exception as e:
-            return {
-                'error': str(e)
-            }, 400
-        try:
-            data = request.form
-            validated_data = ProductSchema.model_validate(data)
-
-            product = product_service.get_by_id(product_id)
-
-            if not product:
-                return {
-                    'error': 'Product not found'
-                }, 404
-            
-            image = request.files.get('image')
-
-            if image:
-                cloudinary_helper.validate_image(image)
-                
-                secure_url, public_id = cloudinary_helper.upload_image(
-                    image,
-                    'products'
-                )
-                cloudinary_helper.delete_image(product.image)
-
-                if not secure_url:
-                    return {
-                        'error': 'Error uploading image'
-                    }, 400
-            
             updated_product = product_service.update(
                 product,
                 validated_data,
@@ -168,6 +126,7 @@ class ManageProductResource(Resource):
             updated_product.image = secure_url
 
             return updated_product.to_json(), 200
+
         except Exception as e:
             return {
                 'error': str(e)
